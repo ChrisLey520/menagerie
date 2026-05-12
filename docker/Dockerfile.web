@@ -1,26 +1,40 @@
+# syntax=docker/dockerfile:1
 # 多阶段：在容器内用 Godot headless 导出 Web → nginx 托管静态文件
 # 构建上下文应为仓库根目录：docker build -f docker/Dockerfile.web .
+# Godot 压缩包按容器内 uname -m 选择（x86_64 / aarch64），与镜像架构一致。
 
 FROM ubuntu:22.04 AS godot_export
 
 ARG GODOT_VERSION="4.3"
 ARG RELEASE_NAME="stable"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ca-certificates wget unzip \
+	&& apt-get install -y --no-install-recommends ca-certificates wget unzip libfontconfig1 \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${RELEASE_NAME}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
-	&& wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${RELEASE_NAME}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz" \
-	&& unzip -q "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
-	&& chmod +x "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64" \
-	&& mv "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64" /usr/local/bin/godot \
-	&& mkdir -p "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}" \
-	&& unzip -q "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz" \
-	&& mv templates/* "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}/" \
-	&& rm -f "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
-	&& rm -f "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz"
+# 按容器真实 CPU 选 Godot 压缩包（uname），避免 ARM 主机 + 错误 TARGETARCH 时下载 x86_64 二进制
+RUN set -eux; \
+	ARCH="$(uname -m)"; \
+	case "$ARCH" in \
+		x86_64) GODOT_PF="x86_64" ;; \
+		aarch64) GODOT_PF="arm64" ;; \
+		*) echo "Unsupported machine ${ARCH} (need x86_64 or aarch64)" >&2; exit 1 ;; \
+	esac; \
+	ZIP="Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.${GODOT_PF}.zip"; \
+	BIN="Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.${GODOT_PF}"; \
+	TPZ="Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz"; \
+	BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${RELEASE_NAME}"; \
+	wget -q "${BASE}/${ZIP}"; \
+	wget -q "${BASE}/${TPZ}"; \
+	unzip -q "${ZIP}"; \
+	chmod +x "${BIN}"; \
+	mv "${BIN}" /usr/local/bin/godot; \
+	mkdir -p "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}"; \
+	unzip -q "${TPZ}"; \
+	mv templates/* "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}/"; \
+	rm -f "${ZIP}" "${TPZ}"
 
 WORKDIR /project
 
