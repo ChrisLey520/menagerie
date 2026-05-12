@@ -1,0 +1,10 @@
+# 静态托管 Godot Web 导出目录（默认挂载仓库根下的 ./web-export）
+# 用法：见 docker/README.md
+
+services:
+  sudoku-web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ../web-export:/usr/share/nginx/html:ro

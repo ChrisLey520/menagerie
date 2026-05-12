@@ -1,0 +1,21 @@
+# Godot 4+（各应用独立工程）
+.godot/
+apps/*/.godot/
+packages/*/.godot/
+
+# Logs
+logs
+*.log
+
+# Godot Web 导出目录（本地 / Docker 挂载用，勿提交大体积产物）
+web-export/
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example

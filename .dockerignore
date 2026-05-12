@@ -1,0 +1,5 @@
+# 减小 docker build 上下文（构建上下文为仓库根目录）
+.git
+**/.godot
+web-export
+*.log

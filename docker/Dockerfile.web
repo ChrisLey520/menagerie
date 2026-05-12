@@ -1,0 +1,36 @@
+# 多阶段：在容器内用 Godot headless 导出 Web → nginx 托管静态文件
+# 构建上下文应为仓库根目录：docker build -f docker/Dockerfile.web .
+
+FROM ubuntu:22.04 AS godot_export
+
+ARG GODOT_VERSION="4.3"
+ARG RELEASE_NAME="stable"
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates wget unzip \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${RELEASE_NAME}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
+	&& wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${RELEASE_NAME}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz" \
+	&& unzip -q "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
+	&& chmod +x "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64" \
+	&& mv "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64" /usr/local/bin/godot \
+	&& mkdir -p "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}" \
+	&& unzip -q "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz" \
+	&& mv templates/* "/root/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME}/" \
+	&& rm -f "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_linux.x86_64.zip" \
+	&& rm -f "Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz"
+
+WORKDIR /project
+
+COPY apps/sudoku .
+
+RUN mkdir -p build/web \
+	&& godot --headless --path . --export-release "Web" "build/web/index.html"
+
+FROM nginx:alpine
+
+COPY --from=godot_export /project/build/web /usr/share/nginx/html
+
+EXPOSE 80

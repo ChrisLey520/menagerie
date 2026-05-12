@@ -1,0 +1,32 @@
+; Engine configuration file.
+; Godot 4.x — 独立应用：Menagerie · 数独（位于 monorepo apps/sudoku）
+
+config_version=5
+
+[application]
+
+config/name="Menagerie Sudoku"
+config/description="Standalone Sudoku mini-game (Menagerie series). Export HTML5/desktop/mobile from this folder."
+run/main_scene="res://scenes/main_menu.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameSettings="*res://scripts/game_settings.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://localization/translations.csv")
+locale/fallback="zh_CN"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"

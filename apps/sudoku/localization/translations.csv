@@ -1,0 +1,26 @@
+keys,zh_CN,zh_TW,en
+APP_TITLE,小游戏合集,小遊戲合集,Mini Games
+MENU_SUBTITLE,首期 · 数独,首期 · 數獨,Vol.1 · Sudoku
+BTN_PLAY_SUDOKU,开始数独,開始數獨,Play Sudoku
+BTN_BACK,返回,返回,Back
+LABEL_LANGUAGE,语言,語言,Language
+LABEL_THEME,主题,主題,Theme
+SUDOKU_TITLE,数独,數獨,Sudoku
+LABEL_LEVEL,关卡,關卡,Level
+BTN_NEW_GAME,新游戏,新遊戲,New Game
+BTN_KEY_MODE,钥匙模式,鑰匙模式,Key mode
+BTN_UNLOCK,解锁求解,解鎖求解,Solve with hints
+BTN_CLEAR_CELL,清除格子,清除格子,Clear
+KEY_MODE_ON,钥匙：点击格子标记，再选数字,鑰匙：點格子標記，再選數字,Keys: tap cells then pick digits
+TOAST_FILLED,已填入剩余格子,已填入剩餘格子,Filled remaining cells
+DLG_NO_SOLUTION_TITLE,无解,無解,No solution
+DLG_NO_SOLUTION_MSG,当前钥匙与题目组合无解。,目前鑰匙與題目組合無解。,This puzzle has no solution with the current keys.
+DLG_OK,好的,好的,OK
+ERR_CONFLICT,数字冲突（行/列/宫）,數字衝突（行/列/宮）,Conflicting digits in row/column/box
+THEME_FOREST,森林,森林,Forest
+THEME_OCEAN,海洋,海洋,Ocean
+THEME_DAWN,晨曦,晨曦,Dawn
+THEME_DUSK,暮紫,暮紫,Dusk
+LANG_ZH_CN,简体中文,簡體中文,Simplified Chinese
+LANG_ZH_TW,繁体中文,繁體中文,Traditional Chinese
+LANG_EN,English,English,English
