@@ -71,7 +71,7 @@ static func _fill_remaining(grid: PackedInt32Array, rng: RandomNumberGenerator, 
 	var r := cell_idx / SIZE
 	var c := cell_idx % SIZE
 	var b := _box_index(r, c)
-	var cand := ALL_MASK & ~(row_mask[r] | col_mask[c] | box_mask[b])
+	var cand: int = ALL_MASK & ~(row_mask[r] | col_mask[c] | box_mask[b])
 	var digits: Array[int] = []
 	var bit := 1
 	for d in range(1, 10):

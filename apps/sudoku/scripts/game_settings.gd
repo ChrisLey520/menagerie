@@ -26,6 +26,14 @@ var theme_id: String = "forest":
 		save_settings()
 		theme_changed.emit(value)
 
+## 数独「自定线索」模式按钮的自定义名称；空则使用翻译键 BTN_KEY_MODE
+var key_mode_custom_title: String = "":
+	set(value):
+		if key_mode_custom_title == value:
+			return
+		key_mode_custom_title = value
+		save_settings()
+
 
 func _ready() -> void:
 	load_settings()
@@ -36,12 +44,14 @@ func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("ui", "locale", locale_code)
 	cf.set_value("ui", "theme", theme_id)
+	cf.set_value("ui", "key_mode_custom_title", key_mode_custom_title)
 	cf.save(SETTINGS_PATH)
 
 
 func load_settings() -> void:
 	var cf := ConfigFile.new()
 	if cf.load(SETTINGS_PATH) != OK:
+		TranslationServer.set_locale(locale_code)
 		return
 	locale_code = cf.get_value("ui", "locale", "zh_CN")
 	if locale_code not in LOCALE_IDS:
@@ -49,6 +59,8 @@ func load_settings() -> void:
 	theme_id = cf.get_value("ui", "theme", "forest")
 	if theme_id not in THEME_IDS:
 		theme_id = "forest"
+	key_mode_custom_title = str(cf.get_value("ui", "key_mode_custom_title", ""))
+	TranslationServer.set_locale(locale_code)
 
 
 func locale_display_index(code: String) -> int:

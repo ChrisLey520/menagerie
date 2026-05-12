@@ -5,16 +5,18 @@ BTN_PLAY_SUDOKU,开始数独,開始數獨,Play Sudoku
 BTN_BACK,返回,返回,Back
 LABEL_LANGUAGE,语言,語言,Language
 LABEL_THEME,主题,主題,Theme
+LABEL_KEY_MODE_NAME,自定模式名称,自定模式名稱,Custom mode name
+PLACEHOLDER_KEY_MODE_CUSTOM,留空使用默认名称,留空使用預設名稱,Leave blank for default
 SUDOKU_TITLE,数独,數獨,Sudoku
 LABEL_LEVEL,关卡,關卡,Level
 BTN_NEW_GAME,新游戏,新遊戲,New Game
-BTN_KEY_MODE,钥匙模式,鑰匙模式,Key mode
-BTN_UNLOCK,解锁求解,解鎖求解,Solve with hints
+BTN_KEY_MODE,自定线索,自定線索,Custom clues
+BTN_UNLOCK,解锁求解,解鎖求解,Solve with clues
 BTN_CLEAR_CELL,清除格子,清除格子,Clear
-KEY_MODE_ON,钥匙：点击格子标记，再选数字,鑰匙：點格子標記，再選數字,Keys: tap cells then pick digits
+KEY_MODE_ON,开启后：点空格标记，再输入你确定的数字；解锁求解会据此填满其余格。,開啟後：點空格標記，再輸入你確定的數字；解鎖求解會據此填滿其餘格。,"When on: mark empty cells, enter digits you know; Solve fills the rest."
 TOAST_FILLED,已填入剩余格子,已填入剩餘格子,Filled remaining cells
 DLG_NO_SOLUTION_TITLE,无解,無解,No solution
-DLG_NO_SOLUTION_MSG,当前钥匙与题目组合无解。,目前鑰匙與題目組合無解。,This puzzle has no solution with the current keys.
+DLG_NO_SOLUTION_MSG,当前自定线索与题目组合无解。,目前自定線索與題目組合無解。,This puzzle has no solution with the current clues.
 DLG_OK,好的,好的,OK
 ERR_CONFLICT,数字冲突（行/列/宫）,數字衝突（行/列/宮）,Conflicting digits in row/column/box
 THEME_FOREST,森林,森林,Forest

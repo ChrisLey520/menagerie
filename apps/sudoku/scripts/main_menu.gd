@@ -78,6 +78,24 @@ func _build_ui() -> void:
 	theme_opt.item_selected.connect(_on_theme_selected)
 	theme_row.add_child(theme_opt)
 	vb.add_child(theme_row)
+	var km_row := HBoxContainer.new()
+	km_row.name = "KeyModeRow"
+	km_row.add_theme_constant_override("separation", 12)
+	var km_l := Label.new()
+	km_l.name = "KeyModeLabel"
+	km_l.text = tr("LABEL_KEY_MODE_NAME")
+	km_l.custom_minimum_size.x = 96
+	km_l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	km_row.add_child(km_l)
+	var km_edit := LineEdit.new()
+	km_edit.name = "KeyModeTitleEdit"
+	km_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	km_edit.placeholder_text = tr("PLACEHOLDER_KEY_MODE_CUSTOM")
+	km_edit.text = GameSettings.key_mode_custom_title
+	km_edit.focus_exited.connect(_on_key_mode_title_focus_out.bind(km_edit))
+	km_edit.text_submitted.connect(_on_key_mode_title_submitted)
+	km_row.add_child(km_edit)
+	vb.add_child(km_row)
 
 
 func _fill_locale_option(opt: OptionButton) -> void:
@@ -108,6 +126,17 @@ func _on_theme_selected(idx: int) -> void:
 	if idx >= 0 and idx < GameSettings.THEME_IDS.size():
 		GameSettings.theme_id = GameSettings.THEME_IDS[idx]
 	_apply_theme()
+
+
+func _on_key_mode_title_focus_out(edit: LineEdit) -> void:
+	GameSettings.key_mode_custom_title = edit.text.strip_edges()
+
+
+func _on_key_mode_title_submitted(new_text: String) -> void:
+	GameSettings.key_mode_custom_title = new_text.strip_edges()
+	var edit := get_node_or_null("Scroll/Margin/MainVBox/KeyModeRow/KeyModeTitleEdit") as LineEdit
+	if edit:
+		edit.release_focus()
 
 
 func _on_theme_changed(_id: String) -> void:
@@ -147,11 +176,17 @@ func _rebuild_texts() -> void:
 		var sel2 := to.selected
 		_fill_theme_option(to)
 		to.select(clampi(sel2, 0, to.item_count - 1))
+	var km_lab := vb.get_node_or_null("KeyModeRow/KeyModeLabel") as Label
+	if km_lab:
+		km_lab.text = tr("LABEL_KEY_MODE_NAME")
+	var km_edit := vb.get_node_or_null("KeyModeRow/KeyModeTitleEdit") as LineEdit
+	if km_edit:
+		km_edit.placeholder_text = tr("PLACEHOLDER_KEY_MODE_CUSTOM")
 
 
 func _apply_theme() -> void:
 	var pal := ThemePalette.get_palette(GameSettings.theme_id)
-	var blended := pal["bg_top"].lerp(pal["bg_bottom"], 0.45)
+	var blended: Color = (pal["bg_top"] as Color).lerp(pal["bg_bottom"] as Color, 0.45)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = blended
 	sb.set_corner_radius_all(0)
@@ -165,3 +200,10 @@ func _apply_theme() -> void:
 		var sub := vb.get_node_or_null("Subtitle") as Label
 		if sub:
 			sub.add_theme_color_override("font_color", pal["muted"])
+		var km_lab := vb.get_node_or_null("KeyModeRow/KeyModeLabel") as Label
+		if km_lab:
+			km_lab.add_theme_color_override("font_color", pal["muted"])
+		var km_edit := vb.get_node_or_null("KeyModeRow/KeyModeTitleEdit") as LineEdit
+		if km_edit:
+			km_edit.add_theme_color_override("font_color", pal["primary"])
+			km_edit.add_theme_color_override("caret_color", pal["accent"])

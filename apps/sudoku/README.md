@@ -15,17 +15,17 @@
 - **求解**：`scripts/sudoku/solver.gd` — MRV + 行/列/宫位掩码回溯。
 - **出题**：`scripts/sudoku/generator.gd` — 对角三宫预填 + 洗牌回溯终盘，再随机挖空并保证 **至少一解**。
 - **关卡**：`scripts/sudoku/levels.gd` — 5 档难度（给定格数量区间）。
-- **钥匙**：钥匙模式下标记格子并输入数字；**解锁求解** 仅合并「题干 + 钥匙」，填满其余空格；冲突 / 无解有提示。
+- **自定线索**：在「自定线索模式」下标记空格并填入你已确定的数字；**解锁求解** 合并题干与你的线索后填满其余格；冲突 / 无解有提示。主菜单可填写 **自定模式名称**（持久化）覆盖按钮文案。
 - **语言**：简体中文默认，`zh_TW`、`en`；设置写入 `user://settings.cfg`。
 - **主题**：森林 / 海洋 / 晨曦 / 暮紫，持久化同上。
 
 ## 国际化
 
-文案在 [`localization/translations.csv`](localization/translations.csv)，UTF-8。引擎默认语言见 `project.godot` → `internationalization/locale/fallback`（`zh_CN`）。
+文案在 [`localization/translations.csv`](localization/translations.csv)，UTF-8；表头语言代码须与代码中 `GameSettings.LOCALE_IDS` 一致（`zh_CN` / `zh_TW` / `en`）。引擎默认语言见 `project.godot` → `internationalization/locale/fallback`（`zh_CN`）。首次导入工程后应在编辑器 **项目 → 本地化** 中确认翻译资源已生成。
 
 ## Web（H5）导出
 
-**项目 → 导出 → Web**，添加预设后导出。建议在触控设备上确认：格子与按钮 **最小约 44×44**（已在场景中设置 `custom_minimum_size`）。可按需在导出预设里开启 gzip、线程等选项。
+**项目 → 导出 → Web**，添加预设后导出。建议在触控设备上确认：棋盘与数字键随窗口缩放，格子 **最小约 44×44**。可按需在导出预设里开启 gzip、线程等选项。
 
 ## 自动化测试
 

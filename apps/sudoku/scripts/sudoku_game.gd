@@ -1,7 +1,9 @@
 extends Control
-## 数独：棋盘、关卡、钥匙模式、解锁求解
+## 数独：棋盘、关卡、自定线索模式、解锁求解
 
 const CELL_COUNT := 81
+const BOARD_H_MARGIN := 12
+const MIN_CELL_PX := 44
 
 var _rng := RandomNumberGenerator.new()
 
@@ -23,8 +25,19 @@ func _ready() -> void:
 	_rng.randomize()
 	GameSettings.theme_changed.connect(_on_theme_changed)
 	GameSettings.locale_changed.connect(_on_locale_changed)
+	get_viewport().size_changed.connect(_on_viewport_resized)
 	_build_ui()
 	_new_game()
+	call_deferred("_fit_sudoku_grid")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		call_deferred("_fit_sudoku_grid")
+
+
+func _on_viewport_resized() -> void:
+	call_deferred("_fit_sudoku_grid")
 
 
 func _on_theme_changed(_id: String) -> void:
@@ -117,7 +130,7 @@ func _build_ui() -> void:
 	var km := Button.new()
 	km.name = "KeyModeBtn"
 	km.toggle_mode = true
-	km.text = tr("BTN_KEY_MODE")
+	km.text = _key_mode_button_label()
 	km.custom_minimum_size = Vector2(0, 44)
 	km.toggled.connect(_on_key_mode_toggled)
 	row2.add_child(km)
@@ -134,6 +147,22 @@ func _build_ui() -> void:
 	hint.text = tr("KEY_MODE_ON")
 	hint.visible = false
 	root_vb.add_child(hint)
+	var board_margin := MarginContainer.new()
+	board_margin.name = "BoardMargin"
+	board_margin.add_theme_constant_override("margin_left", BOARD_H_MARGIN)
+	board_margin.add_theme_constant_override("margin_right", BOARD_H_MARGIN)
+	board_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var board_slot := Control.new()
+	board_slot.name = "BoardSlot"
+	board_slot.clip_contents = false
+	board_slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var board_center := CenterContainer.new()
+	board_center.name = "BoardCenter"
+	board_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	board_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var grid := GridContainer.new()
 	grid.name = "SudokuGrid"
 	grid.columns = 9
@@ -143,14 +172,17 @@ func _build_ui() -> void:
 	for i in CELL_COUNT:
 		var b := Button.new()
 		b.name = "C%d" % i
-		b.custom_minimum_size = Vector2(44, 44)
+		b.custom_minimum_size = Vector2(MIN_CELL_PX, MIN_CELL_PX)
 		b.focus_mode = Control.FOCUS_ALL
 		b.mouse_filter = Control.MOUSE_FILTER_STOP
 		var idx := i
 		b.pressed.connect(_on_cell_pressed.bind(idx))
 		grid.add_child(b)
 		_cell_buttons.append(b)
-	root_vb.add_child(grid)
+	board_center.add_child(grid)
+	board_slot.add_child(board_center)
+	board_margin.add_child(board_slot)
+	root_vb.add_child(board_margin)
 	var pad := GridContainer.new()
 	pad.name = "NumPad"
 	pad.columns = 5
@@ -179,6 +211,54 @@ func _build_ui() -> void:
 	margin_b.custom_minimum_size.y = safe_bottom
 	root_vb.add_child(margin_b)
 	_style_toolbar_and_pad()
+
+
+func _fit_sudoku_grid() -> void:
+	var slot := get_node_or_null("RootVB/BoardMargin/BoardSlot") as Control
+	var grid := get_node_or_null("RootVB/BoardMargin/BoardSlot/BoardCenter/SudokuGrid") as GridContainer
+	var root := get_node_or_null("RootVB") as Control
+	if not slot or not grid or not root:
+		return
+	var sz := slot.size
+	if sz.x < 16.0 or sz.y < 16.0:
+		return
+	var h_sep := float(grid.get_theme_constant("h_separation", "GridContainer"))
+	var v_sep := float(grid.get_theme_constant("v_separation", "GridContainer"))
+	if h_sep <= 0.0:
+		h_sep = 2.0
+	if v_sep <= 0.0:
+		v_sep = 2.0
+	var cw := (sz.x - 8.0 * h_sep) / 9.0
+	var ch := (sz.y - 8.0 * v_sep) / 9.0
+	var cell := int(floor(minf(cw, ch)))
+	cell = clampi(cell, MIN_CELL_PX, 512)
+	var fs := clampi(int(round(float(cell) * 0.42)), 14, 56)
+	for b in _cell_buttons:
+		b.custom_minimum_size = Vector2(cell, cell)
+		b.add_theme_font_size_override("font_size", fs)
+	var pad := root.get_node_or_null("NumPad") as GridContainer
+	if pad:
+		var full_w := maxf(root.size.x, 100.0)
+		var pad_h := float(pad.get_theme_constant("h_separation", "GridContainer"))
+		var pad_v := float(pad.get_theme_constant("v_separation", "GridContainer"))
+		if pad_h <= 0.0:
+			pad_h = 6.0
+		if pad_v <= 0.0:
+			pad_v = 6.0
+		var ncol := 5
+		var btn_w := (full_w - float(ncol - 1) * pad_h) / float(ncol)
+		var btn_h := maxf(36.0, float(cell) * 0.5)
+		btn_w = minf(btn_w, btn_h * 1.45)
+		var pfs := clampi(int(round(btn_h * 0.38)), 12, 28)
+		for ch_node in pad.get_children():
+			if ch_node is Button:
+				ch_node.custom_minimum_size = Vector2(int(btn_w), int(btn_h))
+				ch_node.add_theme_font_size_override("font_size", pfs)
+
+
+func _key_mode_button_label() -> String:
+	var custom := GameSettings.key_mode_custom_title.strip_edges()
+	return custom if not custom.is_empty() else tr("BTN_KEY_MODE")
 
 
 func _style_toolbar_and_pad() -> void:
@@ -242,7 +322,7 @@ func _apply_all_texts() -> void:
 		ng.text = tr("BTN_NEW_GAME")
 	var km := vb.get_node_or_null("Toolbar2/KeyModeBtn") as Button
 	if km:
-		km.text = tr("BTN_KEY_MODE")
+		km.text = _key_mode_button_label()
 	var unl := vb.get_node_or_null("Toolbar2/UnlockBtn") as Button
 	if unl:
 		unl.text = tr("BTN_UNLOCK")
@@ -290,6 +370,7 @@ func _on_key_mode_toggled(on: bool) -> void:
 	var hint := get_node_or_null("RootVB/KeyHint") as Label
 	if hint:
 		hint.visible = on
+	call_deferred("_fit_sudoku_grid")
 
 
 func _on_cell_pressed(idx: int) -> void:
@@ -402,6 +483,7 @@ func _new_game() -> void:
 	if hint:
 		hint.visible = false
 	_refresh_all_cells()
+	call_deferred("_fit_sudoku_grid")
 
 
 func _display_digit(idx: int) -> int:
