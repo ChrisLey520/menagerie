@@ -13,7 +13,7 @@ BTN_NEW_GAME,新游戏,新遊戲,New Game
 BTN_KEY_MODE,自定线索,自定線索,Custom clues
 BTN_UNLOCK,解锁求解,解鎖求解,Solve with clues
 BTN_CLEAR_CELL,清除格子,清除格子,Clear
-KEY_MODE_ON,开启后：点空格标记，再输入你确定的数字；解锁求解会据此填满其余格。,開啟後：點空格標記，再輸入你確定的數字；解鎖求解會據此填滿其餘格。,"When on: mark empty cells, enter digits you know; Solve fills the rest."
+KEY_MODE_ON,开启后：点空格标记，再输入你确定的数字；不用清空棋盘，解锁求解只采用标记线索并填满其余格。,開啟後：點空格標記，再輸入你確定的數字；不用清空棋盤，解鎖求解只採用標記線索並填滿其餘格。,"When on: mark empty cells and enter digits you know. No need to clear the board; Solve only uses marked clues and fills the rest."
 TOAST_FILLED,已填入剩余格子,已填入剩餘格子,Filled remaining cells
 DLG_NO_SOLUTION_TITLE,无解,無解,No solution
 DLG_NO_SOLUTION_MSG,当前自定线索与题目组合无解。,目前自定線索與題目組合無解。,This puzzle has no solution with the current clues.

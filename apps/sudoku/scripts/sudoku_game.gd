@@ -26,7 +26,14 @@ func _ready() -> void:
 	GameSettings.theme_changed.connect(_on_theme_changed)
 	GameSettings.locale_changed.connect(_on_locale_changed)
 	get_viewport().size_changed.connect(_on_viewport_resized)
+	call_deferred("_boot_initial_ui")
+
+
+func _boot_initial_ui() -> void:
 	_build_ui()
+	_apply_theme_background()
+	UiFont.bind_tree(self)
+	UiFont.bind_option_popups_in_tree(self, 17)
 	_new_game()
 	call_deferred("_fit_sudoku_grid")
 
@@ -41,6 +48,7 @@ func _on_viewport_resized() -> void:
 
 
 func _on_theme_changed(_id: String) -> void:
+	_apply_theme_background()
 	_pal = ThemePalette.get_palette(GameSettings.theme_id)
 	_style_toolbar_and_pad()
 	_refresh_all_cells()
@@ -70,6 +78,11 @@ func _on_locale_picked(idx: int) -> void:
 func _build_ui() -> void:
 	for c in get_children():
 		c.queue_free()
+	var theme_bg := ColorRect.new()
+	theme_bg.name = "ThemeBg"
+	theme_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	theme_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(theme_bg)
 	var root_vb := VBoxContainer.new()
 	root_vb.name = "RootVB"
 	root_vb.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -78,67 +91,81 @@ func _build_ui() -> void:
 	var safe_bottom := 28
 	var top_bar := HBoxContainer.new()
 	top_bar.name = "TopBar"
-	top_bar.add_theme_constant_override("separation", 8)
+	top_bar.add_theme_constant_override("separation", 10)
+	top_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var back := Button.new()
 	back.name = "BackBtn"
 	back.text = tr("BTN_BACK")
-	back.custom_minimum_size = Vector2(72, 44)
+	back.custom_minimum_size = Vector2(76, 44)
 	back.pressed.connect(_on_back)
+	back.add_theme_font_size_override("font_size", 17)
 	top_bar.add_child(back)
 	var title := Label.new()
 	title.name = "Title"
 	title.text = tr("SUDOKU_TITLE")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 24)
 	top_bar.add_child(title)
 	var loc := OptionButton.new()
 	loc.name = "LocaleOption"
-	loc.custom_minimum_size = Vector2(108, 44)
+	loc.custom_minimum_size = Vector2(138, 44)
 	loc.size_flags_horizontal = Control.SIZE_SHRINK_END
 	_fill_locale_option_items(loc)
 	var li := GameSettings.locale_display_index(GameSettings.locale_code)
 	loc.select(li if li >= 0 else 0)
 	loc.item_selected.connect(_on_locale_picked)
+	loc.add_theme_font_size_override("font_size", 16)
 	top_bar.add_child(loc)
 	root_vb.add_child(top_bar)
 	var toolbar := HBoxContainer.new()
 	toolbar.name = "Toolbar"
-	toolbar.add_theme_constant_override("separation", 8)
+	toolbar.add_theme_constant_override("separation", 10)
+	toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var lvl_l := Label.new()
 	lvl_l.name = "LevelLabel"
 	lvl_l.text = tr("LABEL_LEVEL")
+	lvl_l.add_theme_font_size_override("font_size", 17)
 	toolbar.add_child(lvl_l)
 	var lvl_opt := OptionButton.new()
 	lvl_opt.name = "LevelOption"
-	lvl_opt.custom_minimum_size = Vector2(120, 44)
+	lvl_opt.custom_minimum_size = Vector2(118, 44)
+	lvl_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for i in SudokuLevels.level_count():
 		lvl_opt.add_item("%s %d" % [tr("LABEL_LEVEL"), i + 1], i)
 	lvl_opt.select(_level_idx)
 	lvl_opt.item_selected.connect(_on_level_selected)
+	lvl_opt.add_theme_font_size_override("font_size", 17)
 	toolbar.add_child(lvl_opt)
 	var ng := Button.new()
 	ng.name = "NewGameBtn"
 	ng.text = tr("BTN_NEW_GAME")
 	ng.custom_minimum_size = Vector2(0, 44)
+	ng.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ng.pressed.connect(_new_game)
+	ng.add_theme_font_size_override("font_size", 17)
 	toolbar.add_child(ng)
 	root_vb.add_child(toolbar)
 	var row2 := HBoxContainer.new()
 	row2.name = "Toolbar2"
-	row2.add_theme_constant_override("separation", 8)
+	row2.add_theme_constant_override("separation", 10)
+	row2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var km := Button.new()
 	km.name = "KeyModeBtn"
 	km.toggle_mode = true
 	km.text = _key_mode_button_label()
 	km.custom_minimum_size = Vector2(0, 44)
+	km.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	km.toggled.connect(_on_key_mode_toggled)
+	km.add_theme_font_size_override("font_size", 16)
 	row2.add_child(km)
 	var unl := Button.new()
 	unl.name = "UnlockBtn"
 	unl.text = tr("BTN_UNLOCK")
 	unl.custom_minimum_size = Vector2(0, 44)
+	unl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	unl.pressed.connect(_on_unlock)
+	unl.add_theme_font_size_override("font_size", 16)
 	row2.add_child(unl)
 	root_vb.add_child(row2)
 	var hint := Label.new()
@@ -146,6 +173,7 @@ func _build_ui() -> void:
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hint.text = tr("KEY_MODE_ON")
 	hint.visible = false
+	hint.add_theme_font_size_override("font_size", 15)
 	root_vb.add_child(hint)
 	var board_margin := MarginContainer.new()
 	board_margin.name = "BoardMargin"
@@ -183,6 +211,9 @@ func _build_ui() -> void:
 	board_slot.add_child(board_center)
 	board_margin.add_child(board_slot)
 	root_vb.add_child(board_margin)
+	var pad_wrap := CenterContainer.new()
+	pad_wrap.name = "NumPadWrap"
+	pad_wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var pad := GridContainer.new()
 	pad.name = "NumPad"
 	pad.columns = 5
@@ -200,17 +231,21 @@ func _build_ui() -> void:
 	clr.custom_minimum_size = Vector2(52, 44)
 	clr.pressed.connect(_on_clear_pressed)
 	pad.add_child(clr)
-	root_vb.add_child(pad)
-	var dlg := AcceptDialog.new()
-	dlg.name = "NoSolutionDlg"
-	dlg.title = tr("DLG_NO_SOLUTION_TITLE")
-	dlg.dialog_text = tr("DLG_NO_SOLUTION_MSG")
-	dlg.ok_button_text = tr("DLG_OK")
-	add_child(dlg)
+	pad_wrap.add_child(pad)
+	root_vb.add_child(pad_wrap)
 	var margin_b := Control.new()
 	margin_b.custom_minimum_size.y = safe_bottom
 	root_vb.add_child(margin_b)
 	_style_toolbar_and_pad()
+
+
+func _apply_theme_background() -> void:
+	var bg := get_node_or_null("ThemeBg") as ColorRect
+	if bg == null:
+		return
+	var pal := ThemePalette.get_palette(GameSettings.theme_id)
+	var blended: Color = (pal["bg_top"] as Color).lerp(pal["bg_bottom"] as Color, 0.45)
+	bg.color = blended
 
 
 func _fit_sudoku_grid() -> void:
@@ -232,11 +267,11 @@ func _fit_sudoku_grid() -> void:
 	var ch := (sz.y - 8.0 * v_sep) / 9.0
 	var cell := int(floor(minf(cw, ch)))
 	cell = clampi(cell, MIN_CELL_PX, 512)
-	var fs := clampi(int(round(float(cell) * 0.42)), 14, 56)
+	var fs := clampi(int(round(float(cell) * 0.42)), 16, 56)
 	for b in _cell_buttons:
 		b.custom_minimum_size = Vector2(cell, cell)
 		b.add_theme_font_size_override("font_size", fs)
-	var pad := root.get_node_or_null("NumPad") as GridContainer
+	var pad := root.get_node_or_null("NumPadWrap/NumPad") as GridContainer
 	if pad:
 		var full_w := maxf(root.size.x, 100.0)
 		var pad_h := float(pad.get_theme_constant("h_separation", "GridContainer"))
@@ -249,7 +284,7 @@ func _fit_sudoku_grid() -> void:
 		var btn_w := (full_w - float(ncol - 1) * pad_h) / float(ncol)
 		var btn_h := maxf(36.0, float(cell) * 0.5)
 		btn_w = minf(btn_w, btn_h * 1.45)
-		var pfs := clampi(int(round(btn_h * 0.38)), 12, 28)
+		var pfs := clampi(int(round(btn_h * 0.38)), 14, 28)
 		for ch_node in pad.get_children():
 			if ch_node is Button:
 				ch_node.custom_minimum_size = Vector2(int(btn_w), int(btn_h))
@@ -270,7 +305,7 @@ func _style_toolbar_and_pad() -> void:
 		var row := vb.get_node_or_null(path) as HBoxContainer
 		if row:
 			for ch in row.get_children():
-				if ch is Button:
+				if ch is Button or ch is OptionButton:
 					var sb_btn := StyleBoxFlat.new()
 					sb_btn.bg_color = pal["panel"]
 					sb_btn.set_corner_radius_all(10)
@@ -282,8 +317,16 @@ func _style_toolbar_and_pad() -> void:
 					ch.add_theme_stylebox_override("normal", sb_btn.duplicate())
 					ch.add_theme_stylebox_override("hover", sb_btn.duplicate())
 					ch.add_theme_stylebox_override("pressed", sb_btn.duplicate())
-					ch.add_theme_color_override("font_color", pal["primary"])
-	var pad := vb.get_node_or_null("NumPad") as GridContainer
+					UiFont.style_control_text(ch as Control, pal)
+					if ch is OptionButton:
+						UiFont.style_option_button(ch as OptionButton, pal, 17)
+	var level_label := vb.get_node_or_null("Toolbar/LevelLabel") as Label
+	if level_label:
+		level_label.add_theme_color_override("font_color", pal["primary"])
+	var hint := vb.get_node_or_null("KeyHint") as Label
+	if hint:
+		hint.add_theme_color_override("font_color", pal["muted"])
+	var pad := vb.get_node_or_null("NumPadWrap/NumPad") as GridContainer
 	if pad:
 		for ch in pad.get_children():
 			if ch is Button:
@@ -298,7 +341,7 @@ func _style_toolbar_and_pad() -> void:
 				ch.add_theme_stylebox_override("normal", sbn.duplicate())
 				ch.add_theme_stylebox_override("hover", sbn.duplicate())
 				ch.add_theme_stylebox_override("pressed", sbn.duplicate())
-				ch.add_theme_color_override("font_color", pal["primary"])
+				UiFont.style_control_text(ch as Control, pal)
 	var title := vb.get_node_or_null("TopBar/Title") as Label
 	if title:
 		title.add_theme_color_override("font_color", pal["primary"])
@@ -329,20 +372,16 @@ func _apply_all_texts() -> void:
 	var hint := vb.get_node_or_null("KeyHint") as Label
 	if hint:
 		hint.text = tr("KEY_MODE_ON")
-	var clr := vb.get_node_or_null("NumPad/ClearBtn") as Button
+	var clr := vb.get_node_or_null("NumPadWrap/NumPad/ClearBtn") as Button
 	if clr:
 		clr.text = tr("BTN_CLEAR_CELL")
-	var dlg := get_node_or_null("NoSolutionDlg") as AcceptDialog
-	if dlg:
-		dlg.title = tr("DLG_NO_SOLUTION_TITLE")
-		dlg.dialog_text = tr("DLG_NO_SOLUTION_MSG")
-		dlg.ok_button_text = tr("DLG_OK")
 	var loc := vb.get_node_or_null("TopBar/LocaleOption") as OptionButton
 	if loc:
 		var sel := loc.selected
 		_fill_locale_option_items(loc)
 		loc.select(clampi(sel, 0, loc.item_count - 1))
 	_refresh_level_option_items()
+	UiFont.bind_option_popups_in_tree(self, 17)
 
 
 func _refresh_level_option_items() -> void:
@@ -429,9 +468,7 @@ func _on_unlock() -> void:
 		return
 	var res := SudokuSolver.solve(merged)
 	if not res.get("ok", false):
-		var dlg := get_node_or_null("NoSolutionDlg") as AcceptDialog
-		if dlg:
-			dlg.popup_centered()
+		_show_toast("%s：%s" % [tr("DLG_NO_SOLUTION_TITLE"), tr("DLG_NO_SOLUTION_MSG")])
 		return
 	var sol: PackedInt32Array = res["solution"]
 	for i in CELL_COUNT:
@@ -453,8 +490,24 @@ func _show_toast(msg: String) -> void:
 	toast.name = "Toast"
 	toast.text = msg
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	toast.add_theme_color_override("font_color", ThemePalette.get_palette(GameSettings.theme_id)["accent"])
-	toast.add_theme_font_size_override("font_size", 15)
+	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	toast.add_theme_color_override("font_color", ThemePalette.get_palette(GameSettings.theme_id)["primary"])
+	toast.add_theme_font_size_override("font_size", 17)
+	var pal := ThemePalette.get_palette(GameSettings.theme_id)
+	var panel := StyleBoxFlat.new()
+	panel.bg_color = pal["panel"]
+	panel.set_corner_radius_all(12)
+	panel.border_width_left = 1
+	panel.border_width_top = 1
+	panel.border_width_right = 1
+	panel.border_width_bottom = 1
+	panel.border_color = pal["panel_border"]
+	panel.content_margin_left = 12
+	panel.content_margin_top = 8
+	panel.content_margin_right = 12
+	panel.content_margin_bottom = 8
+	toast.add_theme_stylebox_override("normal", panel)
+	UiFont.bind_control(toast)
 	vb.add_child(toast)
 	vb.move_child(toast, vb.get_child_count() - 2)
 	await get_tree().create_timer(1.6).timeout
@@ -520,7 +573,7 @@ func _refresh_cell(idx: int) -> void:
 	b.add_theme_stylebox_override("normal", sb.duplicate())
 	b.add_theme_stylebox_override("hover", sb.duplicate())
 	b.add_theme_stylebox_override("pressed", sb.duplicate())
-	b.add_theme_color_override("font_color", pal["primary"])
+	UiFont.style_control_text(b, pal)
 
 
 func _refresh_all_cells() -> void:
