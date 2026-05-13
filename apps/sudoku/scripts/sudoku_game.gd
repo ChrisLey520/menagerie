@@ -406,18 +406,26 @@ func _on_level_selected(idx: int) -> void:
 
 func _on_key_mode_toggled(on: bool) -> void:
 	_key_mode = on
+	if on:
+		_clear_custom_board()
+		_show_toast(tr("TOAST_CUSTOM_READY"))
 	var hint := get_node_or_null("RootVB/KeyHint") as Label
 	if hint:
 		hint.visible = on
+	_refresh_all_cells()
 	call_deferred("_fit_sudoku_grid")
+
+
+func _clear_custom_board() -> void:
+	for i in CELL_COUNT:
+		_player[i] = 0
+		_key_marks[i] = 0
+		_key_digits[i] = 0
+	_focused = -1
 
 
 func _on_cell_pressed(idx: int) -> void:
 	_focused = idx
-	if _key_mode and _initial[idx] == 0:
-		_key_marks[idx] = 1 if _key_marks[idx] == 0 else 0
-		if _key_marks[idx] == 0:
-			_key_digits[idx] = 0
 	_refresh_cell(idx)
 
 
@@ -425,13 +433,13 @@ func _on_digit_pressed(d: int) -> void:
 	if _focused < 0:
 		return
 	var i := _focused
-	if _initial[i] != 0:
-		return
 	if _key_mode:
-		if _key_marks[i] == 0:
-			return
+		_key_marks[i] = 1
 		_key_digits[i] = d
+		_player[i] = 0
 	else:
+		if _initial[i] != 0:
+			return
 		_player[i] = d
 	_refresh_cell(i)
 
@@ -440,12 +448,13 @@ func _on_clear_pressed() -> void:
 	if _focused < 0:
 		return
 	var i := _focused
-	if _initial[i] != 0:
-		return
 	if _key_mode:
-		if _key_marks[i]:
-			_key_digits[i] = 0
+		_key_marks[i] = 0
+		_key_digits[i] = 0
+		_player[i] = 0
 	else:
+		if _initial[i] != 0:
+			return
 		_player[i] = 0
 	_refresh_cell(i)
 
@@ -454,7 +463,9 @@ func _merged_for_solve() -> PackedInt32Array:
 	var g := PackedInt32Array()
 	g.resize(CELL_COUNT)
 	for i in CELL_COUNT:
-		if _initial[i] != 0:
+		if _key_mode:
+			g[i] = _key_digits[i]
+		elif _initial[i] != 0:
 			g[i] = _initial[i]
 		else:
 			g[i] = _key_digits[i]
@@ -472,7 +483,7 @@ func _on_unlock() -> void:
 		return
 	var sol: PackedInt32Array = res["solution"]
 	for i in CELL_COUNT:
-		if _initial[i] != 0:
+		if not _key_mode and _initial[i] != 0:
 			continue
 		if _key_marks[i] != 0 and _key_digits[i] != 0:
 			continue
@@ -540,6 +551,10 @@ func _new_game() -> void:
 
 
 func _display_digit(idx: int) -> int:
+	if _key_mode:
+		if _key_digits[idx] != 0:
+			return _key_digits[idx]
+		return _player[idx]
 	if _initial[idx] != 0:
 		return _initial[idx]
 	if _key_marks[idx] != 0 and _key_digits[idx] != 0:
@@ -560,10 +575,10 @@ func _refresh_cell(idx: int) -> void:
 	sb.border_width_left = 3 if c % 3 == 0 else 1
 	sb.border_width_bottom = 3 if r == 8 or r % 3 == 2 else 1
 	sb.border_width_right = 3 if c == 8 or c % 3 == 2 else 1
-	if _initial[idx] != 0:
+	if not _key_mode and _initial[idx] != 0:
 		sb.bg_color = pal["fixed"]
 		sb.border_color = pal["grid_line"]
-	elif _key_marks[idx] != 0:
+	elif _key_marks[idx] != 0 and _key_digits[idx] != 0:
 		sb.bg_color = pal["cell"]
 		sb.border_color = pal["key_border"]
 	else:
