@@ -1,6 +1,6 @@
 extends RefCounted
 class_name ThemePalette
-## 清新高级风主题色（计划书定稿），供 StyleBoxFlat / 字体色
+## 清新高级风主题色；含主界面专用 menu_* 键
 
 const PALETTES := {
 	"forest": {
@@ -25,6 +25,18 @@ const PALETTES := {
 		"fixed": Color("#dfede5"),
 		"key_border": Color("#9a7a1e"),
 		"error": Color("#b3261e"),
+		"menu_title": Color("#0a2218"),
+		"menu_subtitle": Color("#5f756c"),
+		"menu_row_label": Color("#2a6b52"),
+		"menu_option_fg": Color("#143127"),
+		"menu_panel": Color("#f5faf7"),
+		"menu_panel_border": Color("#b8d5c8"),
+		"menu_panel_hover": Color("#eaf5ef"),
+		"menu_panel_pressed": Color("#dfeee6"),
+		"menu_play_bg": Color("#ffffff"),
+		"menu_play_bg_hover": Color("#ecf6f1"),
+		"menu_play_bg_pressed": Color("#ddeee4"),
+		"menu_play_text": Color("#2f6f5c"),
 	},
 	"ocean": {
 		"bg_top": Color("#f3f8fc"),
@@ -48,6 +60,18 @@ const PALETTES := {
 		"fixed": Color("#ddeaf5"),
 		"key_border": Color("#9a7a1e"),
 		"error": Color("#b3261e"),
+		"menu_title": Color("#0a2540"),
+		"menu_subtitle": Color("#5f6f82"),
+		"menu_row_label": Color("#1c6ca8"),
+		"menu_option_fg": Color("#0f2f45"),
+		"menu_panel": Color("#f3f9fd"),
+		"menu_panel_border": Color("#b0cce4"),
+		"menu_panel_hover": Color("#e6f2fb"),
+		"menu_panel_pressed": Color("#d9eaf8"),
+		"menu_play_bg": Color("#ffffff"),
+		"menu_play_bg_hover": Color("#ecf4fc"),
+		"menu_play_bg_pressed": Color("#dde8f6"),
+		"menu_play_text": Color("#1e6faf"),
 	},
 	"dawn": {
 		"bg_top": Color("#fcf9f6"),
@@ -71,6 +95,18 @@ const PALETTES := {
 		"fixed": Color("#f0e4da"),
 		"key_border": Color("#8a6a18"),
 		"error": Color("#b3261e"),
+		"menu_title": Color("#3d2316"),
+		"menu_subtitle": Color("#7d6e62"),
+		"menu_row_label": Color("#a8482c"),
+		"menu_option_fg": Color("#3a261c"),
+		"menu_panel": Color("#fcf8f4"),
+		"menu_panel_border": Color("#e5d5c8"),
+		"menu_panel_hover": Color("#f5ebe3"),
+		"menu_panel_pressed": Color("#ece2d9"),
+		"menu_play_bg": Color("#ffffff"),
+		"menu_play_bg_hover": Color("#fdf5f0"),
+		"menu_play_bg_pressed": Color("#f5e8df"),
+		"menu_play_text": Color("#b84528"),
 	},
 	"dusk": {
 		"bg_top": Color("#f7f5fa"),
@@ -94,6 +130,18 @@ const PALETTES := {
 		"fixed": Color("#e8e2f2"),
 		"key_border": Color("#806611"),
 		"error": Color("#b3261e"),
+		"menu_title": Color("#1a1526"),
+		"menu_subtitle": Color("#6d6679"),
+		"menu_row_label": Color("#4d4190"),
+		"menu_option_fg": Color("#2a2238"),
+		"menu_panel": Color("#f7f5fb"),
+		"menu_panel_border": Color("#cbc0dc"),
+		"menu_panel_hover": Color("#edeaf6"),
+		"menu_panel_pressed": Color("#e3dfef"),
+		"menu_play_bg": Color("#ffffff"),
+		"menu_play_bg_hover": Color("#f2eff9"),
+		"menu_play_bg_pressed": Color("#e8e3f4"),
+		"menu_play_text": Color("#5c4d96"),
 	},
 }
 

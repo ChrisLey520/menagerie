@@ -77,6 +77,46 @@ static func style_primary_button(btn: Button, pal: Dictionary) -> void:
 	UiFont.style_control_text_on_accent(btn, pal)
 
 
+## 主菜单主按钮：浅底 + 2px 主题色描边 + menu_play_text
+static func _menu_play_box(bg: Color, border_col: Color, radius: int) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = bg
+	sb.set_corner_radius_all(radius)
+	sb.border_width_left = 2
+	sb.border_width_top = 2
+	sb.border_width_right = 2
+	sb.border_width_bottom = 2
+	sb.border_color = border_col
+	return sb
+
+
+static func style_menu_play_button(btn: Button, pal: Dictionary) -> void:
+	var r := RADIUS_CTRL
+	var n := _menu_play_box(pal["menu_play_bg"] as Color, pal["accent"] as Color, r)
+	var h := _menu_play_box(pal["menu_play_bg_hover"] as Color, pal["accent_hover"] as Color, r)
+	var p := _menu_play_box(pal["menu_play_bg_pressed"] as Color, pal["accent_pressed"] as Color, r)
+	btn.add_theme_stylebox_override("normal", n)
+	btn.add_theme_stylebox_override("hover", h)
+	btn.add_theme_stylebox_override("pressed", p)
+	btn.add_theme_stylebox_override("focus", n.duplicate())
+	UiFont.style_control_text_color(
+		btn, pal["menu_play_text"] as Color, pal["menu_subtitle"] as Color
+	)
+
+
+## 主菜单次级控件（语言 / 主题下拉）
+static func style_menu_secondary_control(c: Control, pal: Dictionary) -> void:
+	var rad := RADIUS_CTRL
+	var n := _flat_box(pal["menu_panel"] as Color, pal["menu_panel_border"] as Color, rad)
+	var h := _flat_box(pal["menu_panel_hover"] as Color, pal["menu_panel_border"] as Color, rad)
+	var p := _flat_box(pal["menu_panel_pressed"] as Color, pal["menu_panel_border"] as Color, rad)
+	c.add_theme_stylebox_override("normal", n)
+	c.add_theme_stylebox_override("hover", h)
+	c.add_theme_stylebox_override("pressed", p)
+	c.add_theme_stylebox_override("focus", n.duplicate())
+	UiFont.style_control_text_color(c, pal["menu_option_fg"] as Color, pal["menu_subtitle"] as Color)
+
+
 ## KeyMode 开启：底 fixed、描边 accent
 static func style_key_mode_button_active(btn: Button, pal: Dictionary) -> void:
 	var sb := _flat_box(pal["fixed"] as Color, pal["accent"] as Color, RADIUS_CTRL)

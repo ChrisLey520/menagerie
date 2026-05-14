@@ -240,30 +240,30 @@ func _apply_theme() -> void:
 	if vb:
 		var title := vb.get_node_or_null("Title") as Label
 		if title:
-			title.add_theme_color_override("font_color", pal["primary"])
+			title.add_theme_color_override("font_color", pal["menu_title"])
 		var sub := vb.get_node_or_null("Subtitle") as Label
 		if sub:
-			sub.add_theme_color_override("font_color", pal["muted"])
+			sub.add_theme_color_override("font_color", pal["menu_subtitle"])
 		var play := vb.get_node_or_null("PlaySudoku") as Button
 		if play:
-			UiChrome.style_primary_button(play, pal)
+			UiChrome.style_menu_play_button(play, pal)
 		var lang_l := vb.get_node_or_null("LangLabel") as Label
 		if lang_l:
-			lang_l.add_theme_color_override("font_color", pal["primary"])
+			lang_l.add_theme_color_override("font_color", pal["menu_row_label"])
 		var theme_l := vb.get_node_or_null("ThemeLabel") as Label
 		if theme_l:
-			theme_l.add_theme_color_override("font_color", pal["primary"])
+			theme_l.add_theme_color_override("font_color", pal["menu_row_label"])
 		var lo := vb.get_node_or_null("LangRow/LocaleOption") as OptionButton
 		if lo:
-			UiChrome.style_secondary_control(lo, pal)
-			UiFont.style_option_button(lo, pal, 17)
+			UiChrome.style_menu_secondary_control(lo, pal)
+			UiFont.style_menu_option_button(lo, pal, 17)
 		var to := vb.get_node_or_null("ThemeRow/ThemeOption") as OptionButton
 		if to:
-			UiChrome.style_secondary_control(to, pal)
-			UiFont.style_option_button(to, pal, 17)
+			UiChrome.style_menu_secondary_control(to, pal)
+			UiFont.style_menu_option_button(to, pal, 17)
 		var km_lab := vb.get_node_or_null("KeyModeRow/KeyModeLabel") as Label
 		if km_lab:
-			km_lab.add_theme_color_override("font_color", pal["muted"])
+			km_lab.add_theme_color_override("font_color", pal["menu_subtitle"])
 		var km_edit := vb.get_node_or_null("KeyModeRow/KeyModeTitleEdit") as LineEdit
 		if km_edit:
-			UiFont.style_line_edit(km_edit, pal)
+			UiFont.style_menu_line_edit(km_edit, pal)

@@ -65,6 +65,15 @@ static func style_control_text(control: Control, pal: Dictionary) -> void:
 	control.add_theme_color_override("font_disabled_color", pal["muted"])
 
 
+## 任意固定字色（主界面等）
+static func style_control_text_color(control: Control, fg: Color, disabled: Color) -> void:
+	control.add_theme_color_override("font_color", fg)
+	control.add_theme_color_override("font_hover_color", fg)
+	control.add_theme_color_override("font_pressed_color", fg)
+	control.add_theme_color_override("font_focus_color", fg)
+	control.add_theme_color_override("font_disabled_color", disabled)
+
+
 ## 主色按钮上的字色（on_accent）
 static func style_control_text_on_accent(control: Control, pal: Dictionary) -> void:
 	var on := pal["on_accent"] as Color
@@ -100,6 +109,60 @@ static func style_option_button(ob: OptionButton, pal: Dictionary, font_size: in
 	popup_hover.bg_color = (pal["panel_border"] as Color).lerp(pal["panel"] as Color, 0.65)
 	popup_hover.set_corner_radius_all(10)
 	pop.add_theme_stylebox_override("hover", popup_hover)
+
+
+## 主菜单下拉：menu_panel* + menu_option_fg
+static func style_menu_option_button(ob: OptionButton, pal: Dictionary, font_size: int = 17) -> void:
+	bind_option_button_popup(ob, font_size)
+	style_control_text_color(ob, pal["menu_option_fg"] as Color, pal["menu_subtitle"] as Color)
+
+	var pop := ob.get_popup()
+	if pop == null:
+		return
+	pop.add_theme_color_override("font_color", pal["menu_option_fg"])
+	pop.add_theme_color_override("font_hover_color", pal["menu_option_fg"])
+	pop.add_theme_color_override("font_focus_color", pal["menu_option_fg"])
+	pop.add_theme_color_override("font_disabled_color", pal["menu_subtitle"])
+	var popup_panel := StyleBoxFlat.new()
+	popup_panel.bg_color = pal["menu_panel"]
+	popup_panel.set_corner_radius_all(12)
+	popup_panel.border_width_left = 1
+	popup_panel.border_width_top = 1
+	popup_panel.border_width_right = 1
+	popup_panel.border_width_bottom = 1
+	popup_panel.border_color = pal["menu_panel_border"]
+	pop.add_theme_stylebox_override("panel", popup_panel)
+	var popup_hover := StyleBoxFlat.new()
+	popup_hover.bg_color = (pal["menu_panel_border"] as Color).lerp(pal["menu_panel"] as Color, 0.65)
+	popup_hover.set_corner_radius_all(10)
+	pop.add_theme_stylebox_override("hover", popup_hover)
+
+
+## 主菜单输入框
+static func style_menu_line_edit(edit: LineEdit, pal: Dictionary) -> void:
+	bind_control(edit)
+	edit.add_theme_color_override("font_color", pal["menu_option_fg"])
+	edit.add_theme_color_override("font_placeholder_color", pal["menu_subtitle"])
+	edit.add_theme_color_override("caret_color", pal["menu_row_label"])
+	edit.add_theme_color_override(
+		"selection_color", (pal["menu_row_label"] as Color).lightened(0.62)
+	)
+	var input_panel := StyleBoxFlat.new()
+	input_panel.bg_color = pal["menu_panel"]
+	input_panel.set_corner_radius_all(12)
+	input_panel.border_width_left = 1
+	input_panel.border_width_top = 1
+	input_panel.border_width_right = 1
+	input_panel.border_width_bottom = 1
+	input_panel.border_color = pal["menu_panel_border"]
+	var focus_sb := input_panel.duplicate() as StyleBoxFlat
+	focus_sb.border_color = pal["menu_row_label"]
+	focus_sb.border_width_left = 2
+	focus_sb.border_width_top = 2
+	focus_sb.border_width_right = 2
+	focus_sb.border_width_bottom = 2
+	edit.add_theme_stylebox_override("normal", input_panel.duplicate())
+	edit.add_theme_stylebox_override("focus", focus_sb)
 
 
 ## 输入框也显式绑定浅色主题下的文字、占位符和底色
