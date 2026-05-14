@@ -75,6 +75,13 @@ func _build_ui() -> void:
 	play.add_theme_font_size_override("font_size", 18)
 	play.pressed.connect(_on_play_sudoku)
 	vb.add_child(play)
+	var play_m3 := Button.new()
+	play_m3.name = "PlayMatch3"
+	play_m3.text = tr("BTN_PLAY_MATCH3")
+	play_m3.custom_minimum_size = Vector2(0, 56)
+	play_m3.add_theme_font_size_override("font_size", 18)
+	play_m3.pressed.connect(_on_play_match3)
+	vb.add_child(play_m3)
 	var lang_row := HBoxContainer.new()
 	lang_row.name = "LangRow"
 	lang_row.add_theme_constant_override("separation", 12)
@@ -157,6 +164,10 @@ func _on_play_sudoku() -> void:
 	get_tree().change_scene_to_file("res://scenes/sudoku_game.tscn")
 
 
+func _on_play_match3() -> void:
+	get_tree().change_scene_to_file("res://scenes/match3_game.tscn")
+
+
 func _on_locale_selected(idx: int) -> void:
 	if idx >= 0 and idx < GameSettings.LOCALE_IDS.size():
 		GameSettings.locale_code = GameSettings.LOCALE_IDS[idx]
@@ -200,6 +211,9 @@ func _rebuild_texts() -> void:
 	var play := vb.get_node_or_null("PlaySudoku") as Button
 	if play:
 		play.text = tr("BTN_PLAY_SUDOKU")
+	var play_m3 := vb.get_node_or_null("PlayMatch3") as Button
+	if play_m3:
+		play_m3.text = tr("BTN_PLAY_MATCH3")
 	var lang_l := vb.get_node_or_null("LangLabel") as Label
 	if lang_l:
 		lang_l.text = tr("LABEL_LANGUAGE")
@@ -247,6 +261,9 @@ func _apply_theme() -> void:
 		var play := vb.get_node_or_null("PlaySudoku") as Button
 		if play:
 			UiChrome.style_menu_play_button(play, pal)
+		var play_m3 := vb.get_node_or_null("PlayMatch3") as Button
+		if play_m3:
+			UiChrome.style_menu_play_button(play_m3, pal)
 		var lang_l := vb.get_node_or_null("LangLabel") as Label
 		if lang_l:
 			lang_l.add_theme_color_override("font_color", pal["menu_row_label"])

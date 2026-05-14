@@ -1,6 +1,6 @@
 # Menagerie · Godot 合集工程（Godot 4）
 
-本目录是仓库内 **唯一 Godot 工程根**（`project.godot` 在此），隶属于根目录的 [小游戏合集 Monorepo](../../README.md)。**数独** 为当前已接入的游戏之一；后续其它小游戏也在 **本工程内** 以模块形式扩展，见 [docs/adding-a-game.md](../../docs/adding-a-game.md)。目录名 `sudoku` 为历史沿用，不代表「仅数独工程」。
+本目录是仓库内 **唯一 Godot 工程根**（`project.godot` 在此），隶属于根目录的 [小游戏合集 Monorepo](../../README.md)。**数独** 与 **消消乐（Match-3）** 为当前已接入的游戏；后续其它小游戏也在 **本工程内** 以模块形式扩展，见 [docs/adding-a-game.md](../../docs/adding-a-game.md)。目录名 `sudoku` 为历史沿用，不代表「仅数独工程」。
 
 使用 **Godot 4.3+** 与 **GDScript**，可选导出 **HTML5** 作为 H5。
 
@@ -12,6 +12,7 @@
 
 ## 功能概要
 
+- **消消乐（Match-3）**：`scripts/match3/board_model.gd` 纯逻辑；`scripts/match3_game.gd` + `scenes/match3_game.tscn` — 8×8 相邻交换三消、目标分 2000、28 步、提示与死局洗牌。
 - **求解**：`scripts/sudoku/solver.gd` — MRV + 行/列/宫位掩码回溯。
 - **出题**：`scripts/sudoku/generator.gd` — 对角三宫预填 + 洗牌回溯终盘，再随机挖空并保证 **至少一解**。
 - **关卡**：`scripts/sudoku/levels.gd` — 5 档难度（给定格数量区间）。
@@ -31,6 +32,7 @@
 
 无插件、纯 GDScript，入口场景 [`tests/test_runner.tscn`](tests/test_runner.tscn)：
 
+- **Match-3 棋盘**：`Match3BoardModel` 初始无三连、合法交换消除与计分、提示与洗牌（`tests/unit/test_match3_board.gd`）。
 - **求解器**：`validate_partial`、经典易题求解与线索保留、矛盾题无解、部分格可解。
 - **生成器**：随机终盘合法、`generate_for_level` 可解、`make_puzzle` 在给定目标内挖空仍可解。
 

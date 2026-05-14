@@ -29,6 +29,7 @@
 |------|------|------|
 | **Menagerie Godot 合集** | [`apps/sudoku/`](apps/sudoku/) | Godot 4.3+；单一 `project.godot`，内含数独及后续小游戏模块 |
 | **数独** | 合集内 `scenes/`、`scripts/sudoku/` 等 | MRV 求解、关卡生成、钥匙解锁、多主题与 i18n |
+| **消消乐（Match-3）** | 合集内 [`scenes/match3_game.tscn`](apps/sudoku/scenes/match3_game.tscn)、[`scripts/match3/`](apps/sudoku/scripts/match3/) | 相邻交换三消、步数与目标分、提示与死局洗牌 |
 
 后续新游戏在 **同一** [`apps/sudoku`](apps/sudoku) 工程内增加模块并与主流程衔接，见 [docs/adding-a-game.md](docs/adding-a-game.md)。
 

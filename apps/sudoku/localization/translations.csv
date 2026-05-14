@@ -1,7 +1,8 @@
 keys,zh_CN,zh_TW,en
 APP_TITLE,Menagerie · 小游戏合集,Menagerie · 小遊戲合集,Menagerie
-MENU_SUBTITLE,首期 · 数独,首期 · 數獨,Vol.1 · Sudoku
+MENU_SUBTITLE,数独与消消乐,數獨與消消樂,Sudoku & Match-3
 BTN_PLAY_SUDOKU,开始数独,開始數獨,Play Sudoku
+BTN_PLAY_MATCH3,开始消消乐,開始消消樂,Play Match-3
 BTN_BACK,返回,返回,Back
 LABEL_LANGUAGE,语言,語言,Language
 LABEL_THEME,主题,主題,Theme
@@ -27,3 +28,16 @@ THEME_DUSK,暮紫,暮紫,Dusk
 LANG_ZH_CN,简体中文,簡體中文,Simplified Chinese
 LANG_ZH_TW,繁体中文,繁體中文,Traditional Chinese
 LANG_EN,English,English,English
+MATCH3_TITLE,消消乐,消消樂,Match-3
+MATCH3_LABEL_SCORE,分数,分數,Score
+MATCH3_LABEL_MOVES,步数,步數,Moves
+MATCH3_HINT_BTN,提示,提示,Hint
+MATCH3_HINT_LINE,点击两颗相邻宝石交换；横向或纵向三连即消。,點擊兩顆相鄰寶石交換；橫向或直向三連即消。,"Tap two adjacent gems to swap; match 3+ in a row or column to clear."
+MATCH3_TOAST_HINT,试试这一对高亮宝石。,試試這一對高亮寶石。,Try swapping the highlighted pair.
+MATCH3_TOAST_NO_HINT,本局提示已用完。,本局提示已用完。,No hints left this game.
+MATCH3_WIN_TITLE,过关！,過關！,You win!
+MATCH3_WIN_BODY,已达到目标分数。,已達到目標分數。,You reached the target score.
+MATCH3_LOSE_TITLE,再试一次,再試一次,Try again
+MATCH3_LOSE_BODY,步数用尽，未达 2000 分。,步數用盡，未達 2000 分。,Out of moves before reaching 2000 points.
+MATCH3_BTN_AGAIN,再玩一局,再玩一局,Play again
+MATCH3_BTN_MENU,返回菜单,返回選單,Main menu
