@@ -156,6 +156,7 @@ func _build_ui() -> void:
 	km.text = _key_mode_button_label()
 	km.custom_minimum_size = Vector2(0, 46)
 	km.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# 必须用 toggled(bool)：pressed 可能在 toggle 写入 button_pressed 之前触发，会读到旧状态导致 _key_mode 一直是 false
 	km.toggled.connect(_on_key_mode_toggled)
 	km.add_theme_font_size_override("font_size", 16)
 	row2.add_child(km)
@@ -387,8 +388,16 @@ func _on_key_mode_toggled(on: bool) -> void:
 	_style_toolbar_and_pad()
 
 
+## 进入自定线索：清空初始题面与玩家格，否则关掉模式后仍会显示上一局
 func _clear_custom_board() -> void:
+	if _initial.size() != CELL_COUNT:
+		_initial.resize(CELL_COUNT)
+	if _player.size() != CELL_COUNT:
+		_player.resize(CELL_COUNT)
+	_key_marks.resize(CELL_COUNT)
+	_key_digits.resize(CELL_COUNT)
 	for i in CELL_COUNT:
+		_initial[i] = 0
 		_player[i] = 0
 		_key_marks[i] = 0
 		_key_digits[i] = 0
@@ -500,7 +509,8 @@ func _new_game() -> void:
 	_key_mode = false
 	var km := get_node_or_null("RootVB/Toolbar2/KeyModeBtn") as Button
 	if km:
-		km.button_pressed = false
+		# 避免触发 toggled，防止与上方 _key_mode = false 的时序互相打架
+		km.set_pressed_no_signal(false)
 	var hint := get_node_or_null("RootVB/KeyHint") as Label
 	if hint:
 		hint.visible = false
