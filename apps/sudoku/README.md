@@ -1,13 +1,13 @@
-# Menagerie · 数独（Godot 4）
+# Menagerie · Godot 合集工程（Godot 4）
 
-本目录为 **独立 Godot 应用**，隶属于仓库根目录的 [小游戏合集 Monorepo](../../README.md)。可单独用 Godot 打开本文件夹进行开发与导出；与后续其他游戏并行存在于 `apps/` 下。
+本目录是仓库内 **唯一 Godot 工程根**（`project.godot` 在此），隶属于根目录的 [小游戏合集 Monorepo](../../README.md)。**数独** 为当前已接入的游戏之一；后续其它小游戏也在 **本工程内** 以模块形式扩展，见 [docs/adding-a-game.md](../../docs/adding-a-game.md)。目录名 `sudoku` 为历史沿用，不代表「仅数独工程」。
 
 使用 **Godot 4.3+** 与 **GDScript**，可选导出 **HTML5** 作为 H5。
 
 ## 运行
 
 1. 安装 [Godot 4.3+](https://godotengine.org/download)（推荐与 `project.godot` 中 `config/features` 一致）。
-2. 在 Godot 项目管理器中 **导入 `apps/sudoku` 目录**（不要指向仓库根目录）。
+2. 在 Godot 项目管理器中 **导入本目录 `apps/sudoku`**（不要指向仓库根目录）。
 3. 首次打开会生成 `.godot/` 并导入翻译 CSV；按 **运行（F5）**。
 
 ## 功能概要
@@ -56,7 +56,7 @@ CI：仓库根 [`.github/workflows/godot-tests.yml`](../../.github/workflows/god
 
 | 路径 | 说明 |
 |------|------|
-| `scenes/main_menu.tscn` | 本应用主菜单（入口场景链至数独玩法） |
+| `scenes/main_menu.tscn` | 合集主菜单（入口链至数独等玩法） |
 | `scenes/sudoku_game.tscn` | 数独主界面 |
 | `scripts/game_settings.gd` | 自动加载：语言 / 主题持久化 |
 | `scripts/themes/theme_palette.gd` | 主题色板 |

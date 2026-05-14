@@ -1,7 +1,8 @@
 ---
 name: menagerie-docker-web
 description: >-
-  Starts or restarts the Menagerie Sudoku Godot Web build via Docker Compose
+  Starts or restarts the Menagerie Godot Web build (single repo Godot project
+  under apps/sudoku, includes Sudoku and future mini-games) via Docker Compose
   (Godot headless export inside the image + nginx). Use when the user asks to
   run, start, restart, preview, or deploy the web version locally; mentions
   Docker for this repo; port 8080; or “一条龙” Web without installing Godot.
@@ -36,7 +37,7 @@ docker compose -f docker/docker-compose.full-web.yml down
 docker compose -f docker/docker-compose.full-web.yml up -d
 ```
 
-改了 `apps/sudoku` 且需重新导出 Web 时，用 `up --build` 或显式 `docker compose ... build --no-cache` 后再 `up`。
+改了合集 Godot 工程 `apps/sudoku` 且需重新导出 Web 时，用 `up --build` 或显式 `docker compose ... build --no-cache` 后再 `up`。
 
 ## 备选：只托管已有静态导出
 

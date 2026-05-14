@@ -1,14 +1,14 @@
-# `apps/` — 独立小游戏应用
+# `apps/` — 小游戏应用目录
 
-每个子目录 **必须** 是一个完整的 Godot 项目根目录（含 `project.godot`），可单独打开、单独导出 Web / 桌面 / 移动端。
+本仓库 **只维护一个 Godot 工程根**：[`sudoku/`](sudoku/)（目录名历史沿用）。其中已包含 **数独**，后续其它小游戏也在 **同一** `project.godot` 下以模块形式扩展（场景、脚本子目录等），**不要**在 `apps/` 下再建第二个并列的 Godot 项目。
 
-## 当前应用
+## 当前 Godot 工程
 
-| 目录 | 显示名 | 引擎 |
-|------|--------|------|
-| [`sudoku/`](sudoku/) | Menagerie · 数独 | Godot 4.3+ |
+| 目录 | 显示名 | 引擎 | 说明 |
+|------|--------|------|------|
+| [`sudoku/`](sudoku/) | Menagerie · 小游戏合集 | Godot 4.3+ | 唯一工程根；内含数独及后续游戏模块 |
 
-## 命名建议
+## 命名与结构建议
 
-- 目录名：小写英文、`kebab-case` 或单个单词（如 `sudoku`、`snake`）。
-- `project.godot` 里 `application/config/name`：面向玩家的应用名（可与仓库系列名 Menagerie 组合）。
+- 工程根目录名暂不强制重命名；新增游戏用 **模块 id**（小写、`kebab-case` 或单词）作为脚本/场景子路径（如 `scripts/snake/`、`scenes/snake/`）。
+- `project.godot` 里 `application/config/name`：面向玩家与系统窗口标题的产品名，当前为 **Menagerie**。

@@ -1,4 +1,4 @@
-# Godot 4+（各应用独立工程）
+# Godot 4+（合集 Godot 工程与 packages 下编辑器缓存）
 .godot/
 apps/*/.godot/
 packages/*/.godot/

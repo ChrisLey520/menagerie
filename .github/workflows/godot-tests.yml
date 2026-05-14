@@ -1,4 +1,4 @@
-name: Godot Sudoku Tests
+name: Godot Menagerie Tests
 
 on:
   push:
@@ -21,6 +21,6 @@ jobs:
           chmod +x Godot_v4.3-stable_linux.x86_64
           sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot-ci
 
-      - name: Run automation tests (apps/sudoku)
+      - name: Run automation tests (Menagerie Godot project, apps/sudoku)
         working-directory: apps/sudoku
         run: godot-ci --headless --path . res://tests/test_runner.tscn

@@ -1,39 +1,40 @@
 # Menagerie · 小游戏合集（Monorepo）
 
-本仓库采用 **monorepo**：根目录只放约定、文档与 CI；**每个小游戏是一个可独立导出、独立发布的 Godot 工程**，位于 [`apps/`](apps/) 下。
+本仓库采用 **monorepo**：根目录只放约定、文档与 CI；**所有小游戏（含数独）共用同一个 Godot 工程**，仓库内仅有一份 `project.godot`，位于 [`apps/sudoku/`](apps/sudoku/)（目录名历史沿用；该目录即 **Menagerie 合集 Godot 工程根**）。导出 Web / 桌面 / 移动端时针对该工程执行一次即可。
 
 | 目录 | 说明 |
 |------|------|
-| [`apps/`](apps/) | 各小游戏独立应用（各自包含 `project.godot`） |
-| [`packages/shared/`](packages/shared/) | 预留：跨应用复用的脚本 / 资源 / 插件封装 |
+| [`apps/`](apps/) | 应用相关目录；当前 **唯一 Godot 工程根** 为 [`apps/sudoku`](apps/sudoku/)，其下按模块组织各小游戏 |
+| [`packages/shared/`](packages/shared/) | 预留：跨工程复用的脚本 / 资源 / 插件封装（由 Godot 工程按需引用） |
 | [`docs/`](docs/) | 仓库级说明（如新增游戏的约定） |
-| [`.github/workflows/`](.github/workflows/) | CI（按应用目录运行测试或扩展为矩阵） |
+| [`.github/workflows/`](.github/workflows/) | CI（针对合集 Godot 工程运行测试；新游戏测试在同一 `--path` 下扩展） |
 
 ## 注意事项（请先读）
 
-- **在 Godot 里应打开子应用目录，不要打开仓库根目录**  
-  根目录下没有 `project.godot`，无法作为 Godot 工程运行。开发、运行、导出某个游戏时，请在 Godot 项目管理器中选择 **该游戏所在文件夹**（例如数独：[`apps/sudoku`](apps/sudoku)），使编辑器使用的工程根为 `apps/<游戏名>/`。
+- **在 Godot 里只打开合集工程目录，不要打开仓库根目录**  
+  根目录下没有 `project.godot`。开发、运行、导出 **任意** 已接入的小游戏时，均在 Godot 项目管理器中打开 **[`apps/sudoku`](apps/sudoku)**，使编辑器工程根为该合集目录。
 
-- **每个游戏自成一个 Godot 项目**  
-  新增游戏时，在 [`apps/`](apps/) 下新建独立子目录，并在其中放置该游戏自己的 `project.godot`、场景与脚本。不要假设「在根目录能统一跑所有游戏」；合集关系由本仓库的目录与文档约定体现，工程之间不强制绑在一个 Godot 项目里。
+- **所有小游戏处于同一 Godot 工程**  
+  新增游戏时在 **该工程内部** 增加场景与脚本子树（例如按 `scripts/<game-id>/`、`scenes/<game-id>/` 划分），并在主菜单或路由中接入；**不要**在 `apps/` 下再建第二个含 `project.godot` 的并列 Godot 工程。
 
-- **自动化测试以应用目录为工作目录**  
-  数独的测试在 [`apps/sudoku`](apps/sudoku) 下执行；仓库根目录的 [`scripts/run-sudoku-tests.sh`](scripts/run-sudoku-tests.sh) 会转调到该目录。CI 同样使用 `apps/sudoku` 作为 `--path`（见 [`.github/workflows/godot-tests.yml`](.github/workflows/godot-tests.yml)）。
+- **自动化测试以合集工程目录为工作目录**  
+  测试在 [`apps/sudoku`](apps/sudoku) 下执行；仓库根目录的 [`scripts/run-sudoku-tests.sh`](scripts/run-sudoku-tests.sh) 会转调到该目录。CI 使用 `apps/sudoku` 作为 `--path`（见 [`.github/workflows/godot-tests.yml`](.github/workflows/godot-tests.yml)）；新游戏的测试入口可扩展为同一工程内的多个 runner 场景或统一 runner。
 
 - **更多游戏与共享代码**  
-  增加新游戏的步骤见 [docs/adding-a-game.md](docs/adding-a-game.md)。跨游戏复用内容计划放在 [`packages/shared`](packages/shared)；具体引用方式在真正接入时再写在对应应用的 README 里。
+  增加新游戏的步骤见 [docs/adding-a-game.md](docs/adding-a-game.md)。跨游戏复用内容计划放在 [`packages/shared`](packages/shared)；在 Godot 中引用时在合集 README 或模块 README 中写清路径约定。
 
 ## 应用一览
 
-| 应用 | 路径 | 说明 |
+| 内容 | 路径 | 说明 |
 |------|------|------|
-| **数独** | [`apps/sudoku/`](apps/sudoku/) | Godot 4.3+；MRV 求解、关卡生成、钥匙解锁、多主题与 i18n |
+| **Menagerie Godot 合集** | [`apps/sudoku/`](apps/sudoku/) | Godot 4.3+；单一 `project.godot`，内含数独及后续小游戏模块 |
+| **数独** | 合集内 `scenes/`、`scripts/sudoku/` 等 | MRV 求解、关卡生成、钥匙解锁、多主题与 i18n |
 
-后续新游戏在 `apps/<game-id>/` 新增独立工程即可，不与现有游戏强制耦合。
+后续新游戏在 **同一** [`apps/sudoku`](apps/sudoku) 工程内增加模块并与主流程衔接，见 [docs/adding-a-game.md](docs/adding-a-game.md)。
 
 ## 克隆后怎么用
 
-- **开发 / 运行 / 导出数独**：在 Godot 中 **导入或打开** 目录 [`apps/sudoku`](apps/sudoku)（见上文「注意事项」）。详细功能与导出说明见该目录下的 [apps/sudoku/README.md](apps/sudoku/README.md)。
+- **开发 / 运行 / 导出（含数独及后续小游戏）**：在 Godot 中 **导入或打开** 目录 [`apps/sudoku`](apps/sudoku)（见上文「注意事项」）。详细功能与导出说明见 [apps/sudoku/README.md](apps/sudoku/README.md)。
 - **跑数独自动化测试**（需本机已安装 Godot 4.3+，可执行文件名为 `godot` 且在 `PATH` 中，或通过环境变量 `GODOT` 指定完整路径）：
 
 ```bash
@@ -72,7 +73,7 @@ python3 -m http.server 8080
 1. **只托管**：你自己或其它流水线已经导出好静态文件，放进 **`web-export/`**，再运行 [`docker/web.docker-compose.yml`](docker/web.docker-compose.yml)（仅 nginx 挂载目录）。  
 2. **一条龙（不在本机安装 Godot）**：用 **[`docker/docker-compose.full-web.yml`](docker/docker-compose.full-web.yml)**（或同目录下的 [`Dockerfile.web`](docker/Dockerfile.web)）在镜像里 **下载 Godot + 导出模板 → headless 导出 Web → nginx 对外提供服务**。构建需要联网拉取官方 Godot 与模板；运行浏览器访问 **http://localhost:8080**。
 
-数独工程已包含 Web 导出预设 [`apps/sudoku/export_presets.cfg`](apps/sudoku/export_presets.cfg)（预设名 **`Web`**），供 Docker 内 `godot --export-release "Web"` 使用。
+合集 Godot 工程已包含 Web 导出预设 [`apps/sudoku/export_presets.cfg`](apps/sudoku/export_presets.cfg)（预设名 **`Web`**），供 Docker 内 `godot --export-release "Web"` 使用。
 
 ### 小结
 
@@ -83,5 +84,5 @@ python3 -m http.server 8080
 
 ## 文档
 
-- [新增一个小游戏应用（约定）](docs/adding-a-game.md)
+- [新增一个小游戏（约定）](docs/adding-a-game.md)
 - [应用索引](apps/README.md)

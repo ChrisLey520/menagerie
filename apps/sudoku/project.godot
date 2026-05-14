@@ -1,12 +1,12 @@
 ; Engine configuration file.
-; Godot 4.x — 独立应用：Menagerie · 数独（位于 monorepo apps/sudoku）
+; Godot 4.x — Menagerie 小游戏合集工程（monorepo 内唯一 project.godot；目录名 apps/sudoku 为历史沿用）
 
 config_version=5
 
 [application]
 
-config/name="Menagerie Sudoku"
-config/description="Standalone Sudoku mini-game (Menagerie series). Export HTML5/desktop/mobile from this folder."
+config/name="Menagerie"
+config/description="Menagerie mini-games collection (Sudoku and more in one Godot project). Export HTML5/desktop/mobile from this folder."
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"

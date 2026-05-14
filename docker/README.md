@@ -44,7 +44,7 @@ docker build -f docker/Dockerfile.web -t menagerie-sudoku-web .
 docker run --rm -p 8080:80 menagerie-sudoku-web
 ```
 
-构建上下文为仓库根（见 [`Dockerfile.web`](Dockerfile.web) 中 `COPY apps/sudoku`）；忽略规则见根目录 [`.dockerignore`](../.dockerignore)。
+构建上下文为仓库根（见 [`Dockerfile.web`](Dockerfile.web) 中 `COPY apps/sudoku` — 即 **Menagerie 唯一 Godot 合集工程根**）；忽略规则见根目录 [`.dockerignore`](../.dockerignore)。
 
 ### 说明与排错
 
