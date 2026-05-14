@@ -65,6 +65,16 @@ static func style_control_text(control: Control, pal: Dictionary) -> void:
 	control.add_theme_color_override("font_disabled_color", pal["muted"])
 
 
+## 主色按钮上的字色（on_accent）
+static func style_control_text_on_accent(control: Control, pal: Dictionary) -> void:
+	var on := pal["on_accent"] as Color
+	control.add_theme_color_override("font_color", on)
+	control.add_theme_color_override("font_hover_color", on)
+	control.add_theme_color_override("font_pressed_color", on)
+	control.add_theme_color_override("font_focus_color", on)
+	control.add_theme_color_override("font_disabled_color", pal["muted"])
+
+
 ## 统一下拉框弹层文字/底色，避免浅色主题下回显或选项文字过淡
 static func style_option_button(ob: OptionButton, pal: Dictionary, font_size: int = 17) -> void:
 	bind_option_button_popup(ob, font_size)
@@ -79,7 +89,7 @@ static func style_option_button(ob: OptionButton, pal: Dictionary, font_size: in
 	pop.add_theme_color_override("font_disabled_color", pal["muted"])
 	var popup_panel := StyleBoxFlat.new()
 	popup_panel.bg_color = pal["panel"]
-	popup_panel.set_corner_radius_all(8)
+	popup_panel.set_corner_radius_all(12)
 	popup_panel.border_width_left = 1
 	popup_panel.border_width_top = 1
 	popup_panel.border_width_right = 1
@@ -87,8 +97,8 @@ static func style_option_button(ob: OptionButton, pal: Dictionary, font_size: in
 	popup_panel.border_color = pal["panel_border"]
 	pop.add_theme_stylebox_override("panel", popup_panel)
 	var popup_hover := StyleBoxFlat.new()
-	popup_hover.bg_color = (pal["panel_border"] as Color).lerp(pal["panel"] as Color, 0.35)
-	popup_hover.set_corner_radius_all(6)
+	popup_hover.bg_color = (pal["panel_border"] as Color).lerp(pal["panel"] as Color, 0.65)
+	popup_hover.set_corner_radius_all(10)
 	pop.add_theme_stylebox_override("hover", popup_hover)
 
 
@@ -101,14 +111,20 @@ static func style_line_edit(edit: LineEdit, pal: Dictionary) -> void:
 	edit.add_theme_color_override("selection_color", (pal["accent"] as Color).lightened(0.55))
 	var input_panel := StyleBoxFlat.new()
 	input_panel.bg_color = pal["panel"]
-	input_panel.set_corner_radius_all(10)
+	input_panel.set_corner_radius_all(12)
 	input_panel.border_width_left = 1
 	input_panel.border_width_top = 1
 	input_panel.border_width_right = 1
 	input_panel.border_width_bottom = 1
 	input_panel.border_color = pal["panel_border"]
+	var focus_sb := input_panel.duplicate() as StyleBoxFlat
+	focus_sb.border_color = pal["accent"]
+	focus_sb.border_width_left = 2
+	focus_sb.border_width_top = 2
+	focus_sb.border_width_right = 2
+	focus_sb.border_width_bottom = 2
 	edit.add_theme_stylebox_override("normal", input_panel.duplicate())
-	edit.add_theme_stylebox_override("focus", input_panel.duplicate())
+	edit.add_theme_stylebox_override("focus", focus_sb)
 
 
 static func bind_option_popups_in_tree(root: Node, font_size: int = 17) -> void:

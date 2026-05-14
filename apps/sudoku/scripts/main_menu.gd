@@ -1,6 +1,9 @@
 extends Control
 ## 合集首页：进入数独、语言 / 主题
 
+const _MAIN_VB := "Scroll/ContentCenter/Margin/Card/MainVBox"
+
+
 func _ready() -> void:
 	# 须在 GameSettings._deferred_sync_locale 之后首次构建，否则 Web 上首帧 tr() 仍落在浏览器语言（常为英文）
 	GameSettings.theme_changed.connect(_on_theme_changed)
@@ -39,32 +42,36 @@ func _build_ui() -> void:
 	margin.name = "Margin"
 	margin.add_theme_constant_override("margin_left", 20)
 	margin.add_theme_constant_override("margin_right", 20)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_bottom", maxi(24, int(get_viewport().get_visible_rect().size.y * 0.02)))
+	margin.add_theme_constant_override("margin_top", 28)
+	margin.add_theme_constant_override("margin_bottom", maxi(28, int(get_viewport().get_visible_rect().size.y * 0.02)))
 	center.add_child(margin)
+	var card := PanelContainer.new()
+	card.name = "Card"
+	var vw := int(get_viewport().get_visible_rect().size.x)
+	card.custom_minimum_size.x = clampi(vw - 40, 280, 520)
+	margin.add_child(card)
 	var vb := VBoxContainer.new()
 	vb.name = "MainVBox"
-	vb.add_theme_constant_override("separation", 16)
-	var vw := int(get_viewport().get_visible_rect().size.x)
-	vb.custom_minimum_size.x = clampi(vw - 40, 280, 520)
-	margin.add_child(vb)
+	vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vb.add_theme_constant_override("separation", 18)
+	card.add_child(vb)
 	var title := Label.new()
 	title.name = "Title"
 	title.text = tr("APP_TITLE")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 32)
+	title.add_theme_font_size_override("font_size", 34)
 	vb.add_child(title)
 	var sub := Label.new()
 	sub.name = "Subtitle"
 	sub.text = tr("MENU_SUBTITLE")
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sub.add_theme_font_size_override("font_size", 18)
+	sub.add_theme_font_size_override("font_size", 17)
 	vb.add_child(sub)
 	var play := Button.new()
 	play.name = "PlaySudoku"
 	play.text = tr("BTN_PLAY_SUDOKU")
-	play.custom_minimum_size = Vector2(0, 54)
+	play.custom_minimum_size = Vector2(0, 56)
 	play.add_theme_font_size_override("font_size", 18)
 	play.pressed.connect(_on_play_sudoku)
 	vb.add_child(play)
@@ -85,7 +92,7 @@ func _build_ui() -> void:
 	lang_opt.select(cur_i if cur_i >= 0 else 0)
 	lang_opt.item_selected.connect(_on_locale_selected)
 	lang_opt.add_theme_font_size_override("font_size", 17)
-	lang_opt.custom_minimum_size.x = 148
+	lang_opt.custom_minimum_size = Vector2(148, 46)
 	lang_row.add_child(lang_opt)
 	vb.add_child(lang_row)
 	var theme_row := HBoxContainer.new()
@@ -105,7 +112,7 @@ func _build_ui() -> void:
 	theme_opt.select(ti if ti >= 0 else 0)
 	theme_opt.item_selected.connect(_on_theme_selected)
 	theme_opt.add_theme_font_size_override("font_size", 17)
-	theme_opt.custom_minimum_size.x = 148
+	theme_opt.custom_minimum_size = Vector2(148, 46)
 	theme_row.add_child(theme_opt)
 	vb.add_child(theme_row)
 	var km_row := HBoxContainer.new()
@@ -123,6 +130,7 @@ func _build_ui() -> void:
 	km_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	km_edit.placeholder_text = tr("PLACEHOLDER_KEY_MODE_CUSTOM")
 	km_edit.text = GameSettings.key_mode_custom_title
+	km_edit.custom_minimum_size.y = 46
 	km_edit.focus_exited.connect(_on_key_mode_title_focus_out.bind(km_edit))
 	km_edit.text_submitted.connect(_on_key_mode_title_submitted)
 	km_edit.add_theme_font_size_override("font_size", 17)
@@ -166,7 +174,7 @@ func _on_key_mode_title_focus_out(edit: LineEdit) -> void:
 
 func _on_key_mode_title_submitted(new_text: String) -> void:
 	GameSettings.key_mode_custom_title = new_text.strip_edges()
-	var edit := get_node_or_null("Scroll/ContentCenter/Margin/MainVBox/KeyModeRow/KeyModeTitleEdit") as LineEdit
+	var edit := get_node_or_null("%s/KeyModeRow/KeyModeTitleEdit" % _MAIN_VB) as LineEdit
 	if edit:
 		edit.release_focus()
 
@@ -180,7 +188,7 @@ func _on_locale_changed(_code: String) -> void:
 
 
 func _rebuild_texts() -> void:
-	var vb := get_node_or_null("Scroll/ContentCenter/Margin/MainVBox") as VBoxContainer
+	var vb := get_node_or_null(_MAIN_VB) as VBoxContainer
 	if not vb:
 		return
 	var title := vb.get_node_or_null("Title") as Label
@@ -224,7 +232,11 @@ func _apply_theme() -> void:
 	if bg_rect:
 		bg_rect.color = blended
 
-	var vb := get_node_or_null("Scroll/ContentCenter/Margin/MainVBox") as VBoxContainer
+	var card := get_node_or_null("Scroll/ContentCenter/Margin/Card") as PanelContainer
+	if card:
+		UiChrome.style_card_panel(card, pal)
+
+	var vb := get_node_or_null(_MAIN_VB) as VBoxContainer
 	if vb:
 		var title := vb.get_node_or_null("Title") as Label
 		if title:
@@ -234,7 +246,7 @@ func _apply_theme() -> void:
 			sub.add_theme_color_override("font_color", pal["muted"])
 		var play := vb.get_node_or_null("PlaySudoku") as Button
 		if play:
-			UiFont.style_control_text(play, pal)
+			UiChrome.style_primary_button(play, pal)
 		var lang_l := vb.get_node_or_null("LangLabel") as Label
 		if lang_l:
 			lang_l.add_theme_color_override("font_color", pal["primary"])
@@ -243,9 +255,11 @@ func _apply_theme() -> void:
 			theme_l.add_theme_color_override("font_color", pal["primary"])
 		var lo := vb.get_node_or_null("LangRow/LocaleOption") as OptionButton
 		if lo:
+			UiChrome.style_secondary_control(lo, pal)
 			UiFont.style_option_button(lo, pal, 17)
 		var to := vb.get_node_or_null("ThemeRow/ThemeOption") as OptionButton
 		if to:
+			UiChrome.style_secondary_control(to, pal)
 			UiFont.style_option_button(to, pal, 17)
 		var km_lab := vb.get_node_or_null("KeyModeRow/KeyModeLabel") as Label
 		if km_lab:
